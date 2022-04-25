@@ -26,28 +26,26 @@ def get_size(file_path: str):
 
 
 def make_upload_packages(dir_path):
-    files_in_dir = [os.path.join(dir_path, file) for file in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, file))]
-    upload_packages = [[]]
-    cur_size = 0
-    index = 0
+    """Prepare a list of lists of files to upload
 
-    for file in files_in_dir:
-        file_size = get_size(file)
-        if not under_8MB(0, file_size):
-            continue
+    Assumes all files in the target directory are to be uploaded.
 
-        if not under_8MB(cur_size, file_size) or len(upload_packages[index]) >= 10:
-            index += 1
-            cur_size = 0
-            upload_packages.append([])
-
-        upload_packages[index].append(discord.File(file))
-        cur_size += file_size
-
-    if len(upload_packages[index]) == 0:
-        upload_packages = upload_packages[:-1]
-
-    return upload_packages
+    @param dir_path Path to the target directory
+    """
+    global MAX_MEME_SIZE
+    files_in_dir = []
+    output = []
+    for filename in os.listdir(dir_path):
+        full_path = os.path.join(dir_path, filename)
+        # Skip directories
+        if os.path.isfile(full_path):
+            # Skip large files
+            if os.path.getsize(full_path) <= MAX_MEME_SIZE:
+                files_in_dir.append(full_path)
+    while bool(len(files_in_dir)):
+        output.append(files_in_dir[0:10])  # Hard-coded chunk size
+        files_in_dir = files_in_dir[10:]
+    return output
 
 
 def read_token(file_path: str) -> str:
