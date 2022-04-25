@@ -25,26 +25,42 @@ def get_size(file_path: str):
     return os.path.getsize(file_path)
 
 
-def make_upload_packages(dir_path):
+def make_upload_packages(dir_path: str) -> list:
     """Prepare a list of lists of files to upload
 
-    Assumes all files in the target directory are to be uploaded.
+    Assumes all files in the target directory are to be uploaded.  Sets a cap
+    of 8MB per chunk.  Trims files > 8MB before sifting into chunks.
+
+    TODO:
+    * Clarify whether the limit is 8MB per chunk or 8MB per file
 
     @param dir_path Path to the target directory
+    @return List of lists; list of chunks of filenames for upload
     """
     global MAX_MEME_SIZE
+    chunk_size = 0
     files_in_dir = []
-    output = []
+    output = [[]]
     for filename in os.listdir(dir_path):
         full_path = os.path.join(dir_path, filename)
         # Skip directories
         if os.path.isfile(full_path):
             # Skip large files
-            if os.path.getsize(full_path) <= MAX_MEME_SIZE:
-                files_in_dir.append(full_path)
-    while bool(len(files_in_dir)):
-        output.append(files_in_dir[0:10])  # Hard-coded chunk size
-        files_in_dir = files_in_dir[10:]
+            if (size := os.path.getsize(full_path)) <= MAX_MEME_SIZE:
+                files_in_dir.append((full_path, size))
+    # Iterate over the file data
+    for (path, size) in files_in_dir:
+        # If len(chunk) > 9 or new chunk size > max., open a new chunk
+        if (len(output[-1]) > 9) or ((chunk_size + size) > MAX_MEME_SIZE):
+            output.append([])
+            chunk_size = 0
+        # Push to the last chunk and increase chunk size
+        output[-1].append(path)
+        chunk_size += size
+    # Trim last list if empty
+    # NOTE: This probably will never occur, given the algorithm above
+    if len(output[-1]) == 0:
+        return output[:-1]
     return output
 
 
