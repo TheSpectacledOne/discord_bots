@@ -48,15 +48,15 @@ def make_upload_packages(dir_path: str) -> list:
             # Skip large files
             size = os.path.getsize(full_path)
             if size <= MAX_MEME_SIZE:
-                files_in_dir.append((full_path, size))
+                files_in_dir.append((discord.File(full_path), size))
     # Iterate over the file data
-    for (path, size) in files_in_dir:
+    for (file, size) in files_in_dir:
         # If len(chunk) > 9 or new chunk size > max., open a new chunk
         if (len(output[-1]) > 9) or ((chunk_size + size) > MAX_MEME_SIZE):
             output.append([])
             chunk_size = 0
         # Push to the last chunk and increase chunk size
-        output[-1].append(path)
+        output[-1].append(file)
         chunk_size += size
     # Trim last list if empty
     # NOTE: This probably will never occur, given the algorithm above
