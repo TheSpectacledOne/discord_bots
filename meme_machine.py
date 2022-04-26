@@ -21,10 +21,6 @@ MAX_MEME_SIZE = 8 * 1024 * 1024
 # -----------------------------------------------------------------------------
 
 
-def get_size(file_path: str):
-    return os.path.getsize(file_path)
-
-
 def make_upload_packages(dir_path: str) -> list:
     """Prepare a list of lists of files to upload
 
@@ -69,14 +65,6 @@ def read_token(file_path: str) -> str:
     with open(file_path, "r") as fh:
         data = fh.read()
     return data.strip()
-
-
-def under_8MB(cur_size, file_size):
-    global MAX_MEME_SIZE
-    if file_size + cur_size < MAX_MEME_SIZE:
-        return True
-    else:
-        return False
 
 
 # Bot handling
