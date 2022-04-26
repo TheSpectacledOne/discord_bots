@@ -46,7 +46,8 @@ def make_upload_packages(dir_path: str) -> list:
         # Skip directories
         if os.path.isfile(full_path):
             # Skip large files
-            if (size := os.path.getsize(full_path)) <= MAX_MEME_SIZE:
+            size = os.path.getsize(full_path)
+            if size <= MAX_MEME_SIZE:
                 files_in_dir.append((full_path, size))
     # Iterate over the file data
     for (path, size) in files_in_dir:
