@@ -67,16 +67,28 @@ def read_token(file_path: str) -> str:
     return data.strip()
 
 
-def sort_ctime(data: list) -> list:
-    """Sort a list of filenames by creation time
+def sort_by_stat_attr(data: list, attr: str = "st_mtime") -> list:
+    """Sort a list of filenames by a stat attribute
 
-    Assumes filenames are absolute paths.  May require error handling blocks.
+    Assumes filenames are absolute paths.  Throws a `RuntimeError` if the
+    attribute is not found in the `os.stat_result` object.
 
     :param list[str] data: List of absolute paths to the files of interest
-    :return: List of filenames sorted by creation time on disk
+    :param str attr: `os.stat_result` attribute to attempt to get
+    :return: List of filenames sorted by stat attribute value
     :rtype: list[str]
     """
-    return list(sorted(data, by=lambda x: os.stat(x).st_ctime))
+    file_data = []
+
+    for x in data:
+        stat_result = os.stat(x)
+        if not hasattr(stat_result, attr):
+            raise RuntimeError(f"`os.stat_result` object has no attr: {attr}")
+        file_data.append([x, getattr(stat_result, attr)])
+
+    return list(map(
+        lambda x: x[0],
+        sorted(file_data, by=lambda x: x[1])))
 
 
 # Bot handling
