@@ -2,6 +2,7 @@
 # -----------------------------------------------------------------------------
 
 
+import argparse
 import discord
 import os
 import sys
@@ -65,6 +66,39 @@ def read_token(file_path: str) -> str:
     with open(file_path, "r") as fh:
         data = fh.read()
     return data.strip()
+
+
+def parse_args() -> dict:
+    """Parse command-line arguments"""
+    ap = argparse.ArgumentParser()
+
+    ap.add_argument(
+        "token",
+        help="Path to the text file containing the bot API token",
+        required=True,
+        type=str)
+
+    ap.add_argument(
+        "--test",
+        help="Path to the file to send when running the test command",
+        required=True,
+        type=str)
+
+    ap.add_argument(
+        "--meme",
+        help="Path to the `meme` upload directory",
+        required=True,
+        type=str)
+
+    ap.add_argument(
+        "--jojo",
+        help="Path to the `jojo` upload directory",
+        required=True,
+        type=str)
+
+    args = ap.parse_args()
+
+    return dict(vars(args))
 
 
 # Bot handling
