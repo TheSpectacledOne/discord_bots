@@ -67,6 +67,18 @@ def read_token(file_path: str) -> str:
     return data.strip()
 
 
+def sort_ctime(data: list) -> list:
+    """Sort a list of filenames by creation time
+
+    Assumes filenames are absolute paths.  May require error handling blocks.
+
+    :param list[str] data: List of absolute paths to the files of interest
+    :return: List of filenames sorted by creation time on disk
+    :rtype: list[str]
+    """
+    return list(sorted(data, by=lambda x: os.stat(x).st_ctime))
+
+
 # Bot handling
 # -----------------------------------------------------------------------------
 
