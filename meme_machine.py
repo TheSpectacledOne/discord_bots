@@ -70,7 +70,7 @@ def read_token(file_path: str) -> str:
 def sort_by_stat_attr(data: list, attr: str = "st_mtime") -> list:
     """Sort a list of filenames by a stat attribute
 
-    Assumes filenames are absolute paths.  Throws a `RuntimeError` if the
+    Assumes filenames are absolute paths.  Throws an `AttributeError` if the
     attribute is not found in the `os.stat_result` object.
 
     :param list[str] data: List of absolute paths to the files of interest
