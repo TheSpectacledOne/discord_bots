@@ -83,7 +83,8 @@ def sort_by_stat_attr(data: list, attr: str = "st_mtime") -> list:
     for x in data:
         stat_result = os.stat(x)
         if not hasattr(stat_result, attr):
-            raise RuntimeError(f"`os.stat_result` object has no attr: {attr}")
+            e = "`os.stat_result` object has no attr: {}".format(attr)
+            raise AttributeError(e)
         file_data.append([x, getattr(stat_result, attr)])
 
     return list(map(
